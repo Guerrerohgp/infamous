@@ -1,5 +1,5 @@
 import BaseMeshBehavior from './BaseMeshBehavior'
-import { Color } from 'three'
+import { TextureLoader } from 'three'
 import Class from 'lowclass'
 
 // base class for geometry behaviors
@@ -8,7 +8,11 @@ Class( 'BaseMaterialBehavior' ).extends( BaseMeshBehavior, ({ Super }) => ({
 
     static: {
         type: 'material',
-        observedAttributes: [ 'color', 'material-opacity' ],
+        observedAttributes: [
+            'color',
+            'material-opacity',
+            'map',
+        ],
     },
 
     // TODO: generic type system for attributes.
@@ -36,6 +40,18 @@ Class( 'BaseMaterialBehavior' ).extends( BaseMeshBehavior, ({ Super }) => ({
             if ( opacity < 1 ) material.transparent = true
             else material.transparent = false
 
+            element._needsToBeRendered()
+
+        }
+
+        else if ( attr == 'map' ) {
+
+            // TODO: default material color (if not specified) when there's a texture should be white
+
+            console.log('set map')
+            const material = element.threeObject3d.material
+            const texture = new TextureLoader().load( newVal, () => element._needsToBeRendered() )
+            material.map = texture
             element._needsToBeRendered()
 
         }
